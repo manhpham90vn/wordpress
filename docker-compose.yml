@@ -1,0 +1,92 @@
+version: "3.9"
+
+services:
+  nginx:
+    build:
+      context: ./development/nginx
+      dockerfile: Dockerfile
+    container_name: wordpress_boilerplate_nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+      - ./development/logs:/var/log/nginx
+    networks:
+      - app-network
+
+  php:
+    build:
+      context: ./development/php
+      dockerfile: Dockerfile
+    container_name: wordpress_boilerplate_php
+    restart: always
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - database
+    networks:
+      - app-network
+
+  database:
+    image: mysql:8.3.0
+    container_name: wordpress_boilerplate_database
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=toor
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2.1
+    container_name: wordpress_boilerplate_phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=database
+      - PMA_PORT=3306
+      - MYSQL_ROOT_PASSWORD=toor
+    depends_on:
+      - database
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7.2.4-alpine
+    container_name: wordpress_boilerplate_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network  
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: wordpress_boilerplate_redis_commander
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
