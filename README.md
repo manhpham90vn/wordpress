@@ -7,20 +7,20 @@ docker-compose up -d --build
 
 ## Post install 
 ```shell
-./development/scripts/post-install.sh
+./development/scripts/docker_post_install.sh
 ```
 
 ## Restore database
 ```shell
-./development/scripts/restore.sh
+./development/scripts/docker_restore_database.sh
 ```
 
 ## Backup database
 ```shell
-./development/scripts/backup.sh
+./development/scripts/docker_backup_database.sh
 ```
 
 ## Build docker for production
 ```shell
-docker build .
+docker build ./src -f Dockerfile
 ```

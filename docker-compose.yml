@@ -10,8 +10,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./:/var/www/html
-      - ./development/logs:/var/log/nginx
+      - ./src:/var/www/html
+      - ./logs:/var/log/nginx
     networks:
       - app-network
 
@@ -22,7 +22,7 @@ services:
     container_name: wordpress_boilerplate_php
     restart: always
     volumes:
-      - ./:/var/www/html
+      - ./src:/var/www/html
     depends_on:
       - database
     networks:
